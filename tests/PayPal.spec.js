@@ -8,6 +8,8 @@ test.only('PayPal', async({page})=>
     const paymentData = page.locator("#accordionRequests-7");
 
 
+    
+
     await page.goto("https://wpay.z26.web.core.windows.net/");
     //get title - assertions
     await expect(page).toHaveTitle("3ds-test-harness");    
@@ -71,7 +73,7 @@ test.only('PayPal', async({page})=>
 
      // Click [data-testid="submit-button-initial"]
   await page1.locator('[data-testid="submit-button-initial"]').click();
-  
+
     page.pause();
  
 });
