@@ -8,8 +8,6 @@ test.only('PayPal', async({page})=>
     const paymentData = page.locator("#accordionRequests-7");
 
 
-    
-
     await page.goto("https://wpay.z26.web.core.windows.net/");
     //get title - assertions
     await expect(page).toHaveTitle("3ds-test-harness");    
