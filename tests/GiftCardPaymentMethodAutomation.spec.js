@@ -1,5 +1,6 @@
 const {test, expect} = require('@playwright/test');
-test('Network', async({page})=>
+
+test('Gift card', async({page})=>
 {
     const transactionType = 'PAYMENT';
     const status = 'APPROVED';
@@ -30,6 +31,8 @@ test('Network', async({page})=>
     await page.locator('text=Payment Request').click(); 
     await page.locator("[id='grossAmount']").fill('');
     await page.locator("[id='grossAmount']").type("0.5");
+    // Turn off two step payment:
+    await page.locator("[for='twoStepPayment']").click();
     await page.locator('text=Payment Request').click();  
 
     // Save Settings:
@@ -50,11 +53,13 @@ test('Network', async({page})=>
     await page.locator(".circle-loader load-complete").isVisible();
     
     // Validate from Network:
-    await page.locator('text= Network ').click();
-    const paymentDetails = await page.locator("#accordionRequests-7").allTextContents();
+    await page.locator("text=' Network '").click();
+    const paymentDetails = await page.locator("#accordionRequests-5").allTextContents();
     console.log(paymentDetails);
-    const transactionId = await paymentData.locator("text=transactionId:").textContent();
-  //  await paymentData.locator("text=type")
+    await expect(page.locator("#accordionRequests-5")).toContainText("APPROVED");
+    await expect(page.locator("#accordionRequests-5")).toContainText('status:"APPROVED"');
+    await expect(page.locator("#accordionRequests-5")).toContainText('grossAmount:0.5');
+ 
     page.pause();
  
 });

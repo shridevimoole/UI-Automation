@@ -48,29 +48,37 @@ test('GooglePay with Authentication', async({browser})=>
   
       //Google Pay
       await page.locator("text=Google Pay").click();
-      //const framesPage = await page.frameLocator("iframe.gpay-card-info-iframe gpay-card-info-iframe-fade-in");
-     // framesPage.locator("a[href*='pay.google.com']").click();
 
 
-    // await page.locator("[id='google-pay-btn']").click();
+      //New pop-up window  
+      context.waitForEvent()
+      const [newPage]  = await Promise.all([
+          context.waitForEvent('page'),
+          await page.locator("[aria-label='Google Pay']").click(),
+        
+    
+      ])
 
-     // await page.frameLocator('iframe').locator('[aria-label="Google Pay"]:visible').click();
-     // await page.locator["[id='google-pay-btn']"].click();
-     // await page.waitForTimeout(5000);
-      //await page.locator("button.gpay-card-info-container black long en").click();
-     // await page.locator("[aria-label='Google Pay']").click();
-     //await page.locator("iframe.gpay-card-info-container black long en").click();
+      // Child frame in POP up window:
+      const framesPage = newPage.frameLocator("#sM432dIframe");
+      await page.waitForTimeout(7000);
+      await framesPage.locator("text=Continue").click();
+      
+      await page.waitForTimeout(15000);
+
      
-      await page.waitForTimeout(5000);
-      // wait for dialog to appear
-     // page.on('dialog', dialog => dialog.accept())
-     // await page.waitForTimeout(5000);
-      
-      await page.locator("text=Continue").click();
-      
-  
-      
-      page.pause();
+      await page.locator(".circle-loader load-complete").isVisible();
+      // Validate from Network:
+    await page.locator("text=' Network '").click();
+    const paymentDetails = await page.locator("#accordionRequests-4").allTextContents();
+    console.log(paymentDetails);
+    await expect(page.locator("#accordionRequests-4")).toContainText("APPROVED");
+    await expect(page.locator("#accordionRequests-4")).toContainText('status:"APPROVED"');
+    await expect(page.locator("#accordionRequests-4")).toContainText('grossAmount:0.5');
+ 
+    page.pause();
+   
+
      /* page.close();
       browser.close();
       playwright.close(); */

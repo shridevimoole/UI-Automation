@@ -1,7 +1,12 @@
 const {test, expect} = require('@playwright/test');
 
-test.only('PayPal', async({page})=>
+test('PayPal', async({browser})=>
 {
+    //
+    const context = await browser.newContext({
+        storageState: "./auth.json"
+    })
+    const page = await context.newPage();
     const transactionType = 'PAYMENT';
     const status = 'APPROVED';
     const grossAmount = '0.5';
@@ -43,6 +48,22 @@ test.only('PayPal', async({page})=>
 
     // Click .PAYPAL   
    await page.locator(".PAYPAL").click();
+   await page.waitForTimeout(5000);
+
+    // Child frame :
+   
+   
+      //New pop-up window  
+      context.waitForEvent()
+      const [newPage]  = await Promise.all([
+          context.waitForEvent('page'),
+          await page.frameLocator('title="PayPal"').locator('[aria-label="PayPal"]').click(),
+         
+ 
+        
+    
+      ])
+
    await expect(page).toHaveURL('https://wpay.z26.web.core.windows.net/?environment=UAT&apiKey=9JMPM102iV1PtnO6HwZoorYNpdfqAWap&userId=999&grossAmount=30.00&maxUses=3&useApiOnly=true&payPalSellerProtection=true&selectedPaymentMethod=paypal');
    // Click img[role="presentation"]
    const [page1] = await Promise.all([
